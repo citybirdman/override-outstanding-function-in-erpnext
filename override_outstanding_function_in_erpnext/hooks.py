@@ -109,7 +109,7 @@ app_license = "MIT"
 # Override standard doctype classes
 
 override_doctype_class = {
-	"Customer": "override_outstanding_function_in_erpnext.customer"
+	# "Customer": "override_outstanding_function_in_erpnext.customer"
 }
 
 # Document Events
