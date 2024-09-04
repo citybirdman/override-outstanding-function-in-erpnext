@@ -26,17 +26,17 @@ def get_customer_outstanding(customer, company, ignore_outstanding_sales_order=F
 	# Outstanding based on Sales Order
 	outstanding_based_on_so = 0
 
-# if credit limit check is bypassed at sales order level,
-# we should not consider outstanding Sales Orders, when customer credit balance report is run
-if not ignore_outstanding_sales_order:
-    outstanding_based_on_so = frappe.db.sql(
-	"""
-	select sum(base_grand_total*(100 - per_billed)/100)
-	from `tabSales Order`
-	where customer=%s and docstatus = 1 and company=%s
-	and per_billed < 100 and status != 'Closed'""",
-	(customer, company),
-    )
-
-    outstanding_based_on_so = flt(outstanding_based_on_so[0][0]) if outstanding_based_on_so else 0
-return outstanding_based_on_gle + outstanding_based_on_so
+	# if credit limit check is bypassed at sales order level,
+	# we should not consider outstanding Sales Orders, when customer credit balance report is run
+	if not ignore_outstanding_sales_order:
+	    outstanding_based_on_so = frappe.db.sql(
+		"""
+		select sum(base_grand_total*(100 - per_billed)/100)
+		from `tabSales Order`
+		where customer=%s and docstatus = 1 and company=%s
+		and per_billed < 100 and status != 'Closed'""",
+		(customer, company),
+	    )
+	
+	    outstanding_based_on_so = flt(outstanding_based_on_so[0][0]) if outstanding_based_on_so else 0
+	return outstanding_based_on_gle + outstanding_based_on_so
