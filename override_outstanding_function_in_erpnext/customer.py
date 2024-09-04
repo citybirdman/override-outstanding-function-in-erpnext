@@ -1,5 +1,5 @@
 import frappe
-# from erpnext.selling.doctype.customer.customer import Customer
+from erpnext.selling.doctype.customer.customer import Customer
 from frappe.utils import flt
 
 # class CustomCustomer(Customer):
