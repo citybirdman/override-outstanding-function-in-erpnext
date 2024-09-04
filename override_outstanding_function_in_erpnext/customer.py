@@ -5,26 +5,26 @@ from frappe.utils import flt
 # class CustomCustomer(Customer):
 def get_customer_outstanding(customer, company, ignore_outstanding_sales_order=False, cost_center=None):
     # Outstanding based on GL Entries
-cond = ""
-if cost_center:
-    lft, rgt = frappe.get_cached_value("Cost Center", cost_center, ["lft", "rgt"])
-
-    cond = f""" and cost_center in (select name from `tabCost Center` where
-	lft >= {lft} and rgt <= {rgt})"""
-
-outstanding_based_on_gle = frappe.db.sql(
-    f"""
-    select sum(debit) - sum(credit)
-    from `tabGL Entry` where party_type = 'Customer'
-    and is_cancelled = 0 and party = %s
-    and company=%s {cond}""",
-    (customer, company),
-)
-
-outstanding_based_on_gle = flt(outstanding_based_on_gle[0][0]) if outstanding_based_on_gle else 0
-
-# Outstanding based on Sales Order
-outstanding_based_on_so = 0
+	cond = ""
+	if cost_center:
+	    lft, rgt = frappe.get_cached_value("Cost Center", cost_center, ["lft", "rgt"])
+	
+	    cond = f""" and cost_center in (select name from `tabCost Center` where
+		lft >= {lft} and rgt <= {rgt})"""
+	
+	outstanding_based_on_gle = frappe.db.sql(
+	    f"""
+	    select sum(debit) - sum(credit)
+	    from `tabGL Entry` where party_type = 'Customer'
+	    and is_cancelled = 0 and party = %s
+	    and company=%s {cond}""",
+	    (customer, company),
+	)
+	
+	outstanding_based_on_gle = flt(outstanding_based_on_gle[0][0]) if outstanding_based_on_gle else 0
+	
+	# Outstanding based on Sales Order
+	outstanding_based_on_so = 0
 
 # if credit limit check is bypassed at sales order level,
 # we should not consider outstanding Sales Orders, when customer credit balance report is run
