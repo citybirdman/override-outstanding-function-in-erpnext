@@ -108,9 +108,9 @@ app_license = "MIT"
 # ---------------
 # Override standard doctype classes
 
-override_doctype_class = {
-	# "Customer": "override_outstanding_function_in_erpnext.customer"
-}
+# override_doctype_class = {
+# 	# "Customer": "override_outstanding_function_in_erpnext.customer"
+# }
 
 # Document Events
 # ---------------
@@ -153,9 +153,9 @@ override_doctype_class = {
 # Overriding Methods
 # ------------------------------
 #
-# override_whitelisted_methods = {
-# 	"frappe.desk.doctype.event.event.get_events": "override_outstanding_function_in_erpnext.event.get_events"
-# }
+override_whitelisted_methods = {
+    "erpnext.selling.doctype.customer.customer.get_customer_outstanding": "override_outstanding_function_in_erpnext.customer.get_customer_outstanding"
+}
 #
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,
