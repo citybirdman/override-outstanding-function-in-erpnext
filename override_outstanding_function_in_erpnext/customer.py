@@ -3,9 +3,9 @@ from erpnext.selling.doctype.customer.customer import Customer
 from frappe.utils import flt
 
 # class CustomCustomer(Customer):
+@frappe.whitelist()
 def get_customer_outstanding(customer, company, ignore_outstanding_sales_order=False, cost_center=None):
     # Outstanding based on GL Entries
-	frappe.throw("i'm here")
 	cond = ""
 	if cost_center:
 		lft, rgt = frappe.get_cached_value("Cost Center", cost_center, ["lft", "rgt"])

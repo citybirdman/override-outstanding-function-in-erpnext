@@ -213,3 +213,5 @@ override_whitelisted_methods = {
 # auth_hooks = [
 # 	"override_outstanding_function_in_erpnext.auth.validate"
 # ]
+
+# before_app_boot = "override_outstanding_function_in_erpnext.patches.apply_patch"
