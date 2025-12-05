@@ -40,4 +40,38 @@ def get_customer_outstanding(customer, company, ignore_outstanding_sales_order=F
 	    )
 	
 		outstanding_based_on_so = flt(outstanding_based_on_so[0][0]) if outstanding_based_on_so else 0
-	return outstanding_based_on_gle + outstanding_based_on_so
+
+	outstanding_based_on_dn = 0
+	
+	outstanding_based_on_dn = frappe.db.sql(
+		f"""
+		WITH
+		unbilled_delivery_notes AS (
+		    SELECT DISTINCT dn.name, dn.grand_total
+		    FROM `tabDelivery Note` dn
+		    INNER JOIN `tabDelivery Note Item` dni ON dn.name = dni.parent
+		    WHERE dn.docstatus = 1 AND dni.docstatus = 1 AND dn.is_return = 0 AND dn.status NOT IN ('Closed', 'Completed')
+		    AND dn.name NOT IN (
+		        SELECT DISTINCT sii.delivery_note
+		        FROM `tabSales Invoice Item` sii
+		        INNER JOIN `tabSales Invoice` si ON sii.parent = si.name
+		        WHERE si.docstatus = 1 AND sii.docstatus = 1 AND si.is_return = 0
+		        AND si.is_debit_note = 0 AND update_stock = 0 AND sii.delivery_note IS NOT NULL AND sii.delivery_note != ''
+		        AND si.customer = %s AND si.company = %s
+		    )
+		    AND dni.against_sales_order IN (
+		        SELECT name
+		        FROM `tabSales Order`
+		        WHERE docstatus = 1 AND status = 'Closed'
+		        AND customer = %s AND company = %s
+		    )
+		    AND dn.customer = %s AND dn.company = %s
+		)
+		SELECT SUM(grand_total)
+		FROM unbilled_delivery_notes""",
+		(customer, company),
+		)
+	
+	outstanding_based_on_dn = flt(outstanding_based_on_dn[0][0]) if outstanding_based_on_dn else 0
+	
+	return outstanding_based_on_gle + outstanding_based_on_so + outstanding_based_on_dn
