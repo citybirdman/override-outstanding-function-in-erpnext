@@ -57,20 +57,20 @@ def get_customer_outstanding(customer, company, ignore_outstanding_sales_order=F
 		        INNER JOIN `tabSales Invoice` si ON sii.parent = si.name
 		        WHERE si.docstatus = 1 AND sii.docstatus = 1 AND si.is_return = 0
 		        AND si.is_debit_note = 0 AND update_stock = 0 AND sii.delivery_note IS NOT NULL AND sii.delivery_note != ''
-		        AND si.customer = %s AND si.company = %s
+		        AND si.customer = %(customer)s AND si.company = %(company)s
 		    )
 		    AND dni.against_sales_order IN (
 		        SELECT name
 		        FROM `tabSales Order`
 		        WHERE docstatus = 1 AND status = 'Closed'
-		        AND customer = %s AND company = %s
+		        AND customer = %(customer)s AND company = %(company)s
 		    )
-		    AND dn.customer = %s AND dn.company = %s
+		    AND dn.customer = %(customer)s AND dn.company = %(company)s
 		)
 		SELECT SUM(grand_total)
 		FROM unbilled_delivery_notes""",
-		(customer, company),
-		)
+		{"customer": customer, "company": company}
+	)
 	
 	outstanding_based_on_dn = flt(outstanding_based_on_dn[0][0]) if outstanding_based_on_dn else 0
 	
