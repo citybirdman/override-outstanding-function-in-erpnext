@@ -35,7 +35,7 @@ def get_customer_outstanding(customer, company, ignore_outstanding_sales_order=F
 		select sum(base_grand_total*(100 - per_billed)/100)
 		from `tabSales Order`
 		where customer=%s and docstatus = 1 and company=%s
-		and per_billed < 100 and status != 'Closed'""",
+		and per_billed < 100 and status NOT IN ('Closed', 'Completed')""",
 		(customer, company),
 	    )
 	
